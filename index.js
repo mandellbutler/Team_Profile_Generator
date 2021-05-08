@@ -5,6 +5,71 @@ console.log("Hello World")
 const jest = require("jest");
 const inquirer = require("inquirer");
 
+
+//========================DATA
+
+const name = ""
+const title = ""
+const empId = ""
+const email = ""
+const github = ""
+
+
+
+const questions = [
+    {
+        name: "name",
+        type: "input",
+        message: "What is your name?"
+    },
+    {
+        name: "title",
+        type: "list",
+        message: "What is your job title?",
+        choices: ["Engineer", "Manager", "Intern"]
+    },
+    {
+        name: "empId",
+        type: "input",
+        message: "What is your employee ID number?"
+    },
+    {
+        name: "email",
+        type: "input",
+        message: "What is your email address?"
+    },
+    {
+        name: "officeNum",
+        type: "input",
+        message: "What is your office number?"
+    },
+    {
+        name: "github",
+        type: "input",
+        message: "Please provide your Github username:"
+    },
+    {
+        name: "school",
+        type: "input",
+        message: "What school did you attend?"
+    },
+
+]
+
+const renderQuestions = (questions) => {
+    inquirer
+        .prompt(questions)
+        .then(answers => {
+            renderHtml(answers);
+        });
+};
+
+renderQuestions(questions);
+//========================FUNCTIONS
+
+//========================INTERACTIONS
+
+//========================INIT
 // GIVEN a command-line application that accepts user input
 // WHEN I am prompted for my team members and their information
 // THEN an HTML file is generated that displays a nicely formatted team roster based on user input
