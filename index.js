@@ -4,6 +4,7 @@ console.log("Hello World")
 
 const jest = require("jest");
 const inquirer = require("inquirer");
+const fs = require("fs")
 
 
 //========================DATA
@@ -64,8 +65,18 @@ const renderQuestions = (questions) => {
         });
 };
 
-renderQuestions(questions);
+// renderQuestions(questions);
+
 //========================FUNCTIONS
+
+//get the text from the html template
+const getTemplateContent = (templatePath) => {
+    return fs.readFileSync(templatePath, "utf8")
+}
+
+console.log(getTemplateContent("./src/template.html"));
+// replace the placeholders in the html template
+// write an html file with the data placed into the dist folder
 
 //========================INTERACTIONS
 
