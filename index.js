@@ -1,9 +1,11 @@
+//=====================================DEPENDENCIES
 const inquirer = require("inquirer");
 const fs = require("fs");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const Manager = require("./lib/Manager");
 
+//====================================FUNCTIONS
 const employees = [];
 
 function initApp() {
@@ -82,14 +84,8 @@ function addEmployee() {
     });
 }
 
-// function renderHtml(memberArray) {
-//     startHtml();
-//     for (const member of memberArray) {
-//         addHtml(member);
-//     }
-//     finishHtml();
-// }
 
+//========RENDER HTML WITH USER INPUT VIA HTML TEMPLATE
 function startHtml() {
     const html = `<!DOCTYPE html>
     <html lang="en">
@@ -188,19 +184,14 @@ function addHtml(member) {
         });
     });
     
-            
-    
-        
-    
-    
 }
 
 function finishHtml() {
     const html = ` </div>
-    </div>
+        </div>
     
-</body>
-</html>`;
+    </body>
+    </html>`;
 
     fs.appendFile("./dist/results.html", html, function (err) {
         if (err) {
@@ -209,11 +200,5 @@ function finishHtml() {
     });
     console.log("end");
 }
-
-// addMember();
-// startHtml();
-// addHtml("hi")
-// .then(function() {
-// finishHtml();
-// });
+//===========================================INITIALIZATION
 initApp();
