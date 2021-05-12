@@ -1,100 +1,219 @@
-console.log("Hello World")
-
-//========================DEPENDENCIES
-
-const jest = require("jest");
 const inquirer = require("inquirer");
-const fs = require("fs")
+const fs = require("fs");
+const Engineer = require("./lib/Engineer");
+const Intern = require("./lib/Intern");
+const Manager = require("./lib/Manager");
 
+const employees = [];
 
-//========================DATA
-
-const name = ""
-const title = ""
-const empId = ""
-const email = ""
-const github = ""
-
-
-
-const questions = [
-    {
-        name: "name",
-        type: "input",
-        message: "What is your name?"
-    },
-    {
-        name: "title",
-        type: "list",
-        message: "What is your job title?",
-        choices: ["Engineer", "Manager", "Intern"]
-    },
-    {
-        name: "empId",
-        type: "input",
-        message: "What is your employee ID number?"
-    },
-    {
-        name: "email",
-        type: "input",
-        message: "What is your email address?"
-    },
-    {
-        name: "officeNum",
-        type: "input",
-        message: "What is your office number?"
-    },
-    {
-        name: "github",
-        type: "input",
-        message: "Please provide your Github username:"
-    },
-    {
-        name: "school",
-        type: "input",
-        message: "What school did you attend?"
-    },
-
-]
-
-const renderQuestions = (questions) => {
-    inquirer
-        .prompt(questions)
-        .then(answers => {
-            renderHtml(answers);
-        });
-};
-
-// renderQuestions(questions);
-
-//========================FUNCTIONS
-
-//get the text from the html template
-const getTemplateContent = (templatePath) => {
-    return fs.readFileSync(templatePath, "utf8")
+function initApp() {
+    startHtml();
+    addEmployee();
 }
 
-console.log(getTemplateContent("./src/template.html"));
-// replace the placeholders in the html template
-// write an html file with the data placed into the dist folder
+function addEmployee() {
+    inquirer.prompt([{
+        type: "input",
+        message: "Please enter employee name:",
+        name: "name"
+    },
+    {
+        type: "list",
+        message: "Please select job title",
+        choices: [
+            "Engineer",
+            "Intern",
+            "Manager"
+        ],
+        name: "role"
+    },
+    {
+        type: "input",
+        message: "Please enter employee's id:",
+        name: "id"
+    },
+    {
+        type: "input",
+        message: "Please enter employee's email address:",
+        name: "email"
+    }])
+    .then(function({name, role, id, email}) {
+        let roleInfo = "";
+        if (role === "Engineer") {
+            roleInfo = "GitHub username";
+        } else if (role === "Intern") {
+            roleInfo = "school name";
+        } else {
+            roleInfo = "office number";
+        }
+        inquirer.prompt([{
+            message: `Enter employee's ${roleInfo}`,
+            name: "roleInfo"
+        },
+        {
+            type: "list",
+            message: "Would you like to add another employee?",
+            choices: [
+                "yes",
+                "no"
+            ],
+            name: "addEmployees"
+        }])
+        .then(function({roleInfo, addEmployees}) {
+            let newEmployee;
+            if (role === "Engineer") {
+                newEmployee = new Engineer(name, id, email, roleInfo);
+            } else if (role === "Intern") {
+                newEmployee = new Intern(name, id, email, roleInfo);
+            } else {
+                newEmployee = new Manager(name, id, email, roleInfo);
+            }
+            employees.push(newEmployee);
+            addHtml(newEmployee)
+            .then(function() {
+                if (addEmployees === "yes") {
+                    addEmployee();
+                } else {
+                    finishHtml();
+                }
+            });
+            
+        });
+    });
+}
 
-//========================INTERACTIONS
+// function renderHtml(memberArray) {
+//     startHtml();
+//     for (const member of memberArray) {
+//         addHtml(member);
+//     }
+//     finishHtml();
+// }
 
-//========================INIT
-// GIVEN a command-line application that accepts user input
-// WHEN I am prompted for my team members and their information
-// THEN an HTML file is generated that displays a nicely formatted team roster based on user input
-// WHEN I click on an email address in the HTML
-// THEN my default email program opens and populates the TO field of the email with the address
-// WHEN I click on the GitHub username
-// THEN that GitHub profile opens in a new tab
-// WHEN I start the application
-// THEN I am prompted to enter the team manager’s name, employee ID, email address, and office number
-// WHEN I enter the team manager’s name, employee ID, email address, and office number
-// THEN I am presented with a menu with the option to add an engineer or an intern or to finish building my team
-// WHEN I select the engineer option
-// THEN I am prompted to enter the engineer’s name, ID, email, and GitHub username, and I am taken back to the menu
-// WHEN I select the intern option
-// THEN I am prompted to enter the intern’s name, ID, email, and school, and I am taken back to the menu
-// WHEN I decide to finish building my team
-// THEN I exit the application, and the HTML is generated
+function startHtml() {
+    const html = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+        <link rel="stylesheet" href="./style.css"/>
+        <title>Profile Generator</title>
+    </head>
+    <body>
+        <header>
+            <div class="jumbotron jumbotron-fluid p-3 mb-2 bg-danger text-white">
+                <div class="container d-flex p-2 bd-highlight justify-content-center">
+                  <h1 class="display-4">My Team</h1>
+                </div>
+            </div>
+        </header>
+        <main class="d-flex flex-column p-2 bd-highlight">
+            <div class="container d-flex justify-content-center p-2 flex-row col-sm-6 col-md-4">`;
+    fs.writeFile("./dist/results.html", html, function(err) {
+        if (err) {
+            console.log(err);
+        }
+    });
+    console.log("start");
+}
+
+function addHtml(member) {
+    return new Promise(function(resolve, reject) {
+        const name = member.getName();
+        const role = member.getRole();
+        const id = member.getId();
+        const email = member.getEmail();
+        let data = "";
+        if (role === "Engineer") {
+            const gitHub = member.getGithub();
+            data = `<div class="container d-flex p-2 flex-column">
+            <div class="card shadow-lg d-flex flex-column text-white p-0 my-1">
+                <div class="card-header d-flex flex-column bg-primary pb-0 px-3">
+                    <p>${name}</p>
+                    <p><span class="fas fa-glasses"></span> Engineer</p>
+                </div>
+                <div class="container d-flex align-items-center bg-light">
+                    <ul class="list-group p-1 text-dark col 10">
+                        <li class="list-group-item">ID: ${id}</li>
+                        <li class="list-group-item">Email: ${email}</li>
+                        <li class="list-group-item">Github: ${gitHub}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>`; 
+        } else if (role === "Intern") {
+            const school = member.getSchool();
+            data = `<div class="container d-flex p-2 flex-column">
+                        <div class="card shadow-lg d-flex flex-column text-white p-0 my-1">
+                            <div class="card-header d-flex flex-column bg-primary pb-0 px-3">
+                                <p>${name}</p>
+                                <p><span class="fas fa-user-graduate"></span> Intern</p>
+                            </div>
+                            <div class="container d-flex align-items-center bg-light">
+                                <ul class="list-group p-1 text-dark col 10">
+                                    <li class="list-group-item">ID: ${id}</li>
+                                    <li class="list-group-item">Email: ${email}</li>
+                                    <li class="list-group-item">School: ${school}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>`;
+        } else {
+            const office = member.getOffice();
+            data = `<div class="container d-flex p-2 flex-column">
+                        <div class="card shadow-lg d-flex flex-column text-white p-0 my-1">
+                            <div class="card-header d-flex flex-column bg-primary pb-0 px-3">
+                                <p>${name}</p>
+                                <p><span class="fas fa-mug-hot"></span> Manager</p>
+                            </div>
+                            <div class="container d-flex align-items-center bg-light">
+                                <ul class="list-group p-1 text-dark col 10">
+                                    <li class="list-group-item">ID: ${id}</li>
+                                    <li class="list-group-item">Email: ${email}</li>
+                                    <li class="list-group-item">Office: ${office}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>`;
+        }
+        console.log("adding team member");
+        fs.appendFile("./dist/results.html", data, function (err) {
+            if (err) {
+                return reject(err);
+            };
+            return resolve();
+        });
+    });
+    
+            
+    
+        
+    
+    
+}
+
+function finishHtml() {
+    const html = ` </div>
+    </div>
+    
+</body>
+</html>`;
+
+    fs.appendFile("./dist/results.html", html, function (err) {
+        if (err) {
+            console.log(err);
+        };
+    });
+    console.log("end");
+}
+
+// addMember();
+// startHtml();
+// addHtml("hi")
+// .then(function() {
+// finishHtml();
+// });
+initApp();

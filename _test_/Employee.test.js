@@ -34,7 +34,7 @@ describe("Employee", () => {
         const newEmployee = new Employee(test_value, 1);
         expect(newEmployee.getName()).toEqual(test_value)
     });
-
+    //validates name input
     it("name is of type string", () => {
         const test_value = "Ben"
         const newEmployee = new Employee(test_value, 1);
