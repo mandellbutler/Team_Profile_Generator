@@ -42,4 +42,5 @@ it("gets Manager title from getRole()", () => {
     const test_value = "Manager";
     const manager = new Manager("Manager", 99, "sampleMail", "office");
     expect(manager.getRole()).toBe(test_value);
+    
 })

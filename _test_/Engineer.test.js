@@ -25,4 +25,5 @@ it("gets Engineer title from getRole()", () => {
     const test_value = "Engineer";
     const eng = new Engineer("Hero", 99, "sampleMail", "gitName");
     expect(eng.getRole()).toBe(test_value);
+    
 })
